@@ -1,0 +1,170 @@
+# baseURI: http://biohackathon.org/faldo
+
+@prefix :        <http://biohackathon.org/faldo#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix spin:    <http://spinrdf.org/spin#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<http://biohackathon.org/faldo>
+      rdf:type owl:Ontology ;
+      spin:imports <http://topbraid.org/spin/spinowl> , <http://topbraid.org/spin/rdfsplus> , <http://topbraid.org/spin/owlrl-all> ;
+      owl:versionInfo "Created with TopBraid Composer"^^xsd:string .
+
+:BothStrandsPosition
+      rdf:type owl:Class ;
+      rdfs:comment "The both strands position mean that the region spans both strands instead of one. In GGF3 displayed as 0. This does not mean that the position is one or the other strand but is best described as being on both."^^xsd:string ;
+      rdfs:label "Both strands"^^xsd:string ;
+      rdfs:subClassOf :StrandedPosition ;
+      owl:disjointWith :ForwardStrandPosition , :ReverseStrandPosition .
+
+:ExactPosition
+      rdf:type owl:Class ;
+      rdfs:comment "Use when you exactly know the position."^^xsd:string ;
+      rdfs:label "Exact position"^^xsd:string ;
+      rdfs:subClassOf :Position ;
+      rdfs:subClassOf
+              [ rdf:type owl:Restriction ;
+                owl:cardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onProperty :position
+              ] ;
+      owl:disjointWith :InBetweenPosition , :InRangePosition , :OneOfPosition .
+
+:ForwardStrandPosition
+      rdf:type owl:Class ;
+      rdfs:comment "The position is on the forward (positive) strand. Shown as a '+' in GFF3 and GTF"^^xsd:string ;
+      rdfs:label "Positive strand"^^xsd:string ;
+      rdfs:subClassOf :StrandedPosition ;
+      owl:disjointWith :BothStrandsPosition , :ReverseStrandPosition .
+
+:FuzzyPosition
+      rdf:type owl:Class ;
+      rdfs:comment "Use this class to indicate that you lack exact position data."^^xsd:string ;
+      rdfs:label "Fuzzy position"^^xsd:string ;
+      rdfs:subClassOf :Position .
+
+:InBetweenPosition
+      rdf:type owl:Class ;
+      rdfs:comment "This denotes that a feature is in between two other positions that are both known exactly and next to eaxh other. An example is an restriction enzyme cutting site. The cut is after one nucleotide and before the next i.e. in between"^^xsd:string ;
+      rdfs:label "In between positions"^^xsd:string ;
+      rdfs:subClassOf :Position ;
+      rdfs:subClassOf
+              [ rdf:type owl:Class ;
+                owl:intersectionOf ([ rdf:type owl:Restriction ;
+                            owl:onClass :ExactPosition ;
+                            owl:onProperty :before ;
+                            owl:qualifiedCardinality
+                                    "1"^^xsd:nonNegativeInteger
+                          ] [ rdf:type owl:Restriction ;
+                            owl:onClass :ExactPosition ;
+                            owl:onProperty :after ;
+                            owl:qualifiedCardinality
+                                    "1"^^xsd:nonNegativeInteger
+                          ])
+              ] ;
+      owl:disjointWith :ExactPosition , :OneOfPosition , :InRangePosition .
+
+:InRangePosition
+      rdf:type owl:Class ;
+      rdfs:comment "Use when you have an idea of the range in which you can find the position but can not be sure."^^xsd:string ;
+      rdfs:label "Indeterminate position within a range"^^xsd:string ;
+      rdfs:subClassOf :FuzzyPosition ;
+      rdfs:subClassOf
+              [ rdf:type owl:Class ;
+                owl:intersectionOf ([ rdf:type owl:Restriction ;
+                            owl:maxQualifiedCardinality
+                                    "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Position ;
+                            owl:onProperty :begin
+                          ] [ rdf:type owl:Restriction ;
+                            owl:maxQualifiedCardinality
+                                    "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Position ;
+                            owl:onProperty :end
+                          ])
+              ] ;
+      owl:disjointWith :OneOfPosition , :StrandedPosition , :ExactPosition , :InBetweenPosition .
+
+:OneOfPosition
+      rdf:type owl:Class ;
+      rdfs:comment "The position must be one of the positions listed by the position predicate."^^xsd:string ;
+      rdfs:label "One of positions"^^xsd:string ;
+      rdfs:subClassOf :FuzzyPosition ;
+      owl:disjointWith :ExactPosition , :InBetweenPosition , :InRangePosition .
+
+:Position
+      rdf:type owl:Class ;
+      rdfs:comment "Superclass to group the general concept of a position on a sequence. The sequence is designated via the reference predicate."^^xsd:string ;
+      rdfs:label "Position"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      rdfs:subClassOf
+              [ rdf:type owl:Restriction ;
+                owl:cardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onProperty :reference
+              ] .
+
+:Region
+      rdf:type owl:Class ;
+      rdfs:comment "A region describes an length of sequence with a start and end position that represents a feature on a Sequence. i.e. A gene"^^xsd:string ;
+      rdfs:label "Region"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      rdfs:subClassOf
+              [ rdf:type owl:Class ;
+                owl:intersectionOf ([ rdf:type owl:Restriction ;
+                            owl:onClass :Position ;
+                            owl:onProperty :begin ;
+                            owl:qualifiedCardinality
+                                    "1"^^xsd:nonNegativeInteger
+                          ] [ rdf:type owl:Restriction ;
+                            owl:onClass :Position ;
+                            owl:onProperty :end ;
+                            owl:qualifiedCardinality
+                                    "1"^^xsd:nonNegativeInteger
+                          ])
+              ] .
+
+:ReverseStrandPosition
+      rdf:type owl:Class ;
+      rdfs:comment "The position is on the reverse (complement) strand of the sequence. Shown as '-' in GTF and GFF3"^^xsd:string ;
+      rdfs:label "Negative strand"^^xsd:string ;
+      rdfs:subClassOf :StrandedPosition ;
+      owl:disjointWith :ForwardStrandPosition , :BothStrandsPosition .
+
+:StrandedPosition
+      rdf:type owl:Class ;
+      rdfs:comment "Part of the coordinate system is on which strand the feature can be found. If you do not yet know which stand the feature is on you should tag the position with just this class. If you know more you should use one of the subclasses. This means a region descibred with a '.' in GFF3. An GFF3 Unstranded position does not have this type in FALDO those are just a Position."^^xsd:string ;
+      rdfs:label "Stranded position"^^xsd:string ;
+      rdfs:subClassOf :Position .
+
+:after
+      rdf:type owl:ObjectProperty ;
+      rdfs:comment "This predicate is used when you want to describe a non inclusive range. Only used in the in between position to say it is after a nucleotide but before the next one."^^xsd:string ;
+      rdfs:domain :InBetweenPosition ;
+      rdfs:range :ExactPosition .
+
+:before
+      rdf:type owl:ObjectProperty ;
+      rdfs:domain :InBetweenPosition ;
+      rdfs:range :ExactPosition .
+
+:begin
+      rdf:type owl:ObjectProperty ;
+      rdfs:range :Position .
+
+:end  rdf:type owl:ObjectProperty ;
+      rdfs:range :Position .
+
+:location
+      rdf:type owl:ObjectProperty ;
+      rdfs:range :Region .
+
+:position
+      rdf:type owl:DatatypeProperty ;
+      rdfs:comment "The positionValue is the offset along the reference where this position is found. Thus the only the positionValue in combination with the reference determines where a Position is."^^xsd:string , "A position on the first amino acid or nucleotide of a sequence has the value 1. i.e. Python style array indexing not java/C style."^^xsd:string ;
+      rdfs:domain :ExactPosition ;
+      rdfs:range xsd:integer .
+
+:reference
+      rdf:type owl:ObjectProperty ;
+      rdfs:comment "The reference is the resource that determines where the positionValue offsets into.  For example it points to a contig or a genome assembly."^^xsd:string .
