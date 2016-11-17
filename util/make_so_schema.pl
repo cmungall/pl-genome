@@ -11,8 +11,8 @@ write_header :-
         nl,
         setof(N/1,feature_class(N),Exports),
         writep( (:- module(so,Exports)) ),
-        writep( (:- use_module(semweb(rdf_db))) ),
-        writep( (:- use_module(semweb(rdfs))) ),
+        writep( (:- use_module(library(semweb/rdf_db))) ),
+        writep( (:- use_module(library(semweb/rdfs))) ),
         nl.
 
 %        forall(inf_op(M,F,Opts),

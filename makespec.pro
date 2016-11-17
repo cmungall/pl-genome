@@ -12,6 +12,11 @@
 'ontologies/so.ttl' <-- [],
   'owltools http://purl.obolibrary.org/obo/so.owl --extract-mingraph -o -f ttl file://`pwd`/$@'.
 
-'examples/data/yeast.rdf' <-- [],
-  'wget --no-check-certificate https://gff3-to-owl.googlecode.com/files/yeast.owl  -O $@'.
+'examples/data/y.owl.gz' <-- [],
+  'wget --no-check-certificate https://gff3-to-owl.googlecode.com/files/y.owl.gz -O $@'.
+'examples/data/y.owl' <-- 'examples/data/y.owl.gz',
+  'gzip -d $<'.
+'examples/data/y.ttl' <-- 'examples/data/y.owl',
+  'owltools $< --remove-tbox -o -f ttl file://`pwd`/$@'.
+%  'wget --no-check-certificate https://gff3-to-owl.googlecode.com/files/yeast.owl  -O $@'.
 
