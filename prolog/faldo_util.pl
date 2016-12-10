@@ -1,3 +1,5 @@
+/* -*- Mode: Prolog -*- */
+
 :- module(faldo_util,
           [
            feature_interval/8,
@@ -53,11 +55,11 @@ position_as_int(P,Num) :-
         atom_number(A,Num).
 
 position_strand(P,+) :-
-        rdf(P,rdf:type,faldo:'ForwardStrandPosition').
+        positive_strand(P).
 position_strand(P,-) :-
-        rdf(P,rdf:type,faldo:'NegativeStrandPosition').
+        negative_strand(P).
 position_strand(P,both) :-
-        rdf(P,rdf:type,faldo:'BothStrandsPosition').
+        both_strands(P).
 
 feature_length(F,Loc,Len) :-
         % lengths are only meaningful for canonical inervals
@@ -75,13 +77,3 @@ feature_ntype(F,NT) :-
 
 literal_val(literal(type(_,NT)),NT).
 literal_val(literal(lang(_,NT)),NT).
-
-
-
-
-
-
-
-
-        
-        
