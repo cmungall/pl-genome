@@ -10,6 +10,7 @@
 
 upstream_of(PI,+,R,QI,+,R,same) :- PI < QI.
 upstream_of(PI,-,R,QI,-,R,same) :- PI > QI.
+upstream_of(PI,+,R,QI,-,R,opposite) :- PI < QI.
 
 
 upstream_of(P,Q) :-
